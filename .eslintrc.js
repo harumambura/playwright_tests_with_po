@@ -41,5 +41,10 @@ module.exports = {
             ignoreTemplateLiterals: true,
             ignoreRegExpLiterals: true,
         }],
+        'import/prefer-default-export': [
+            // eslint-disable-next-line no-bitwise
+            ('off' | 'warn' | 'error'),
+            { target: 'any' },
+        ],
     },
 };
