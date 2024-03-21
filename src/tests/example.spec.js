@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
 // @ts-nocheck
 const { expect } = require('@playwright/test');
@@ -25,26 +26,19 @@ test.describe('', () => {
         await shopingCartPage.removeCartItemById(0);
         await expect(shopingCartPage.cartItems).not.toBeAttached();
     });
-    /*    Add several random products to the Shopping Cart
-    Verify products are displayed correctly (check Name, Description, and Price values) */
+
     test('Add product to the cart and check', async ({ loginPage, inventoryPage, shopingCartPage }) => {
         await loginPage.navigate();
         await loginPage.performLogin('standard_user', 'secret_sauce');
-        const inventoryItemsCount = await inventoryPage.itemsCount();
-        const randomProductNumbers = [];
-        const products = [];
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < 3; i++) {
-            randomProductNumbers[i] = Math.floor(Math.random() * inventoryItemsCount);
-            await inventoryPage.addItemToCartById(randomProductNumbers[i]);
-            products[i] = await inventoryPage.itemData(randomProductNumbers[i]);
-        }
-        expect(await inventoryPage.getNumberOfItemsInCart()).toBe('3');
+        const selectedCount = 3;
+        const sortedProducts = await inventoryPage.selectNItems(selectedCount);
+        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
 
         await inventoryPage.shopingCart.click();
-        //expect(await shopingCartPage.cartItems.count()).toBeGreaterThanOrEqual(1);
-
-        //await shopingCartPage.removeCartItemById(0);
-        //await expect(shopingCartPage.cartItems).not.toBeAttached();
+        for (let i = 0; i < selectedCount; i++) {
+            expect(await shopingCartPage.cartItemName(i)).toBe(sortedProducts[i].name);
+            expect(await shopingCartPage.cartItemDescr(i)).toBe(sortedProducts[i].descr);
+            expect(await shopingCartPage.cartItemPrice(i)).toBe(sortedProducts[i].price);
+        }
     });
 });

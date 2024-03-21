@@ -1,4 +1,7 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-await-in-loop */
 const { BaseSwagLabPage } = require('./BaseSwagLab.page');
+const { generateRandomNumbers } = require('../HelperFunctions');
 
 export class InventoryPage extends BaseSwagLabPage {
     url = '/inventory.html';
@@ -30,5 +33,17 @@ export class InventoryPage extends BaseSwagLabPage {
         item.descr = await this.inventoryItemDescriptions.nth(id).textContent();
         item.price = await this.inventoryItemPrices.nth(id).textContent();
         return item;
+    }
+
+    async selectNItems(n) {
+        const inventoryItemsCount = await this.itemsCount();
+        const products = [];
+        const selectedCount = n;
+        const randomProductNumbers = generateRandomNumbers(selectedCount, inventoryItemsCount);
+        for (let i = selectedCount - 1; i >= 0; i--) {
+            await this.addItemToCartById(randomProductNumbers[i]);
+            products[i] = await this.itemData(randomProductNumbers[i]);
+        }
+        return products.slice().reverse();
     }
 }
