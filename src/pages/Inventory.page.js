@@ -18,6 +18,8 @@ export class InventoryPage extends BaseSwagLabPage {
 
     get inventoryItemPrices() { return this.page.locator('.inventory_item_price'); }
 
+    get inventorySort() { return this.page.locator('.product_sort_container'); }
+
     async addItemToCartById(id) {
         await this.addItemToCartBtns.nth(id).click();
     }

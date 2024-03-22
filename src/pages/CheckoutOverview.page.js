@@ -1,11 +1,11 @@
+import { priceNumber } from '../HelperFunctions';
+
 const { BaseSwagLabPage } = require('./BaseSwagLab.page');
 
-export class ShopingCartPage extends BaseSwagLabPage {
-    url = '/cart.html';
+export class CheckoutOverviewPage extends BaseSwagLabPage {
+    url = '/checkout-step-one.html';
 
-    cartItemSelector = '.cart_item';
-
-    removeItemSelector = '[id^="remove"]';
+    totalSelector = '.summary_total_label';
 
     cartItemNameSelector = '.inventory_item_name';
 
@@ -13,11 +13,11 @@ export class ShopingCartPage extends BaseSwagLabPage {
 
     cartItemPriceSelector = '.inventory_item_price';
 
-    checkoutSelector = '#checkout';
+    cartTaxSelector = '.summary_tax_label';
 
-    get headerTitle() { return this.page.locator('.title'); }
+    get totalPrice() { return this.page.locator(this.totalSelector); }
 
-    get cartItems() { return this.page.locator(this.cartItemSelector); }
+    get cartTax() { return this.page.locator(this.cartTaxSelector); }
 
     get itemName() { return this.page.locator(this.cartItemNameSelector); }
 
@@ -25,20 +25,23 @@ export class ShopingCartPage extends BaseSwagLabPage {
 
     get itemPrice() { return this.page.locator(this.cartItemPriceSelector); }
 
-    // async below added to show the function returns a promise
-    async getCartItemByName(name) { return this.page.locator(this.cartItemSelector, { hasText: name }); }
-
-    async removeCartItemByName(name) {
-        const item = await this.getCartItemByName(name);
-        return item.locator(this.removeItemSelector);
+    async totalPriceCalculated(itemCount) {
+        let total = 0;        
+        for (let i = 0; i < itemCount; i++) {
+            let priceString = await this.itemPrice.nth(i).textContent();
+            total += priceNumber(priceString);
+        }
+        return total;
     }
 
-    async removeCartItemById(id) {
-        await this.cartItems.nth(id).locator(this.removeItemSelector).click();
+    async totalNumber() {
+        const priceString = await this.totalPrice.textContent();
+        return priceNumber(priceString);
     }
 
-    async clickCheckout() {
-        await this.page.locator(this.checkoutSelector).click();
+    async tax() {
+        const taxString = await this.cartTax.textContent();
+        return priceNumber(taxString);
     }
 
     async cartItemData(id) {

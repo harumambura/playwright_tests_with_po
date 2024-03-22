@@ -27,7 +27,7 @@ test.describe('', () => {
         await expect(shopingCartPage.cartItems).not.toBeAttached();
     });
 
-    test('Add product to the cart and check', async ({ loginPage, inventoryPage, shopingCartPage }) => {
+    test('Add product to the cart and compare', async ({ loginPage, inventoryPage, shopingCartPage }) => {
         await loginPage.navigate();
         await loginPage.performLogin('standard_user', 'secret_sauce');
         const selectedCount = 3;
@@ -39,6 +39,31 @@ test.describe('', () => {
             expect(await shopingCartPage.cartItemName(i)).toBe(sortedProducts[i].name);
             expect(await shopingCartPage.cartItemDescr(i)).toBe(sortedProducts[i].descr);
             expect(await shopingCartPage.cartItemPrice(i)).toBe(sortedProducts[i].price);
+        }
+    });
+
+    test('Add product and continue purchase', async ({ loginPage, inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage }) => {
+        await loginPage.navigate();
+        await loginPage.performLogin('standard_user', 'secret_sauce');
+        const selectedCount = 3;
+        const info = { firstName : 'John', lastName : 'Doe', zipCode : '123123'} ;
+        const sortedProducts = await inventoryPage.selectNItems(selectedCount);
+        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
+
+        await inventoryPage.shopingCart.click();
+        await shopingCartPage.clickCheckout();
+        await checkoutInfoPage.fillInfo(info);
+        await checkoutInfoPage.clickContinue();
+        
+        const itemTotal = await checkoutOverviewPage.totalPriceCalculated(selectedCount);
+        const totalOnPage = await checkoutOverviewPage.totalNumber();
+        const tax = await checkoutOverviewPage.tax();
+        expect(totalOnPage).toBe(itemTotal + tax);
+
+        for (let i = 0; i < selectedCount; i++) {
+            expect(await checkoutOverviewPage.cartItemName(i)).toBe(sortedProducts[i].name);
+            expect(await checkoutOverviewPage.cartItemDescr(i)).toBe(sortedProducts[i].descr);
+            expect(await checkoutOverviewPage.cartItemPrice(i)).toBe(sortedProducts[i].price);
         }
     });
 });

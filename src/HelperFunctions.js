@@ -14,3 +14,8 @@ export function generateRandomNumbers(count, maxCount) {
     }
     return randomProductNumbers;
 }
+
+export function priceNumber(string) {
+    let arr = string.split('$');
+    return Number(arr[1]);
+  }
