@@ -16,6 +16,6 @@ export function generateRandomNumbers(count, maxCount) {
 }
 
 export function priceNumber(string) {
-    let arr = string.split('$');
+    const arr = string.split('$');
     return Number(arr[1]);
-  }
+}

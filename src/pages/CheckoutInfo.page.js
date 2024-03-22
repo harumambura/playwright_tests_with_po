@@ -4,8 +4,11 @@ export class CheckoutInfoPage extends BaseSwagLabPage {
     url = '/checkout-step-one.html';
 
     continueSelector = '#continue';
+
     firstNameSelector = '#first-name';
+
     lastNameSelector = '#last-name';
+
     zipCodeSelector = '#postal-code';
 
     async clickContinue() {

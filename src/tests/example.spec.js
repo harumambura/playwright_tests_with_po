@@ -27,6 +27,16 @@ test.describe('', () => {
         await expect(shopingCartPage.cartItems).not.toBeAttached();
     });
 
+    test('check backward sorting', async ({ loginPage, inventoryPage }) => {
+        await loginPage.navigate();
+        await loginPage.performLogin('standard_user', 'secret_sauce');
+        const itemsBefore = await inventoryPage.inventoryItemNames.allInnerTexts();
+        const itemsSorted = itemsBefore.sort().reverse();
+        await inventoryPage.selectSorting('Name (Z to A)');
+        const itemsAfter = await inventoryPage.inventoryItemNames.allInnerTexts();
+        expect(itemsAfter).toEqual(itemsSorted);
+    });
+
     test('Add product to the cart and compare', async ({ loginPage, inventoryPage, shopingCartPage }) => {
         await loginPage.navigate();
         await loginPage.performLogin('standard_user', 'secret_sauce');
@@ -42,11 +52,13 @@ test.describe('', () => {
         }
     });
 
-    test('Add product and continue purchase', async ({ loginPage, inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage }) => {
+    test('Add product and continue purchase', async ({
+        loginPage, inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage,
+    }) => {
         await loginPage.navigate();
         await loginPage.performLogin('standard_user', 'secret_sauce');
         const selectedCount = 3;
-        const info = { firstName : 'John', lastName : 'Doe', zipCode : '123123'} ;
+        const info = { firstName: 'John', lastName: 'Doe', zipCode: '123123' };
         const sortedProducts = await inventoryPage.selectNItems(selectedCount);
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
 
@@ -54,7 +66,7 @@ test.describe('', () => {
         await shopingCartPage.clickCheckout();
         await checkoutInfoPage.fillInfo(info);
         await checkoutInfoPage.clickContinue();
-        
+
         const itemTotal = await checkoutOverviewPage.totalPriceCalculated(selectedCount);
         const totalOnPage = await checkoutOverviewPage.totalNumber();
         const tax = await checkoutOverviewPage.tax();

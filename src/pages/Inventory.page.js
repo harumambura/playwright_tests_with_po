@@ -48,4 +48,8 @@ export class InventoryPage extends BaseSwagLabPage {
         }
         return products.slice().reverse();
     }
+
+    async selectSorting(sortType) {
+        await this.inventorySort.selectOption({ label: sortType });
+    }
 }

@@ -42,9 +42,10 @@ module.exports = {
             ignoreRegExpLiterals: true,
         }],
         'import/prefer-default-export': [
-            // eslint-disable-next-line no-bitwise
-            ('off' | 'warn' | 'error'),
+            ('off'),
             { target: 'any' },
         ],
+        'no-plusplus': 'off',
+        'no-await-in-loop': 'off',
     },
 };
