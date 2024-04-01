@@ -42,11 +42,11 @@ export class ShopingCartPage extends BaseSwagLabPage {
     }
 
     async cartItemData(id) {
-        const item = {};
-        item.name = await this.itemName.nth(id).textContent();
-        item.descr = await this.itemDescr.nth(id).textContent();
-        item.price = await this.itemPrice.nth(id).textContent();
-        return item;
+        return {
+            name: await this.itemName.nth(id).textContent(),
+            descr: await this.itemDescr.nth(id).textContent(),
+            price: await this.itemPrice.nth(id).textContent()
+        }
     }
 
     async cartItemName(id) {

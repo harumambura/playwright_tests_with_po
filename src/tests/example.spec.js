@@ -3,20 +3,22 @@
 // @ts-nocheck
 const { expect } = require('@playwright/test');
 const { test } = require('../fixture');
+const { generateRandomNumbers } = require('../HelperFunctions');
+
 
 test.describe('', () => {
-    test('Perform login', async ({ loginPage, inventoryPage }) => {
+    test.beforeEach('login', async ( {loginPage} ) => {    
         await loginPage.navigate();
         await loginPage.performLogin('standard_user', 'secret_sauce');
+    })
 
+    test('Perform login', async ({ loginPage, inventoryPage }) => {
         await expect(inventoryPage.headerTitle).toBeVisible();
 
         expect(await inventoryPage.inventoryItems.count()).toBeGreaterThanOrEqual(1);
     });
 
     test('Add and remove product from the cart', async ({ loginPage, inventoryPage, shopingCartPage }) => {
-        await loginPage.navigate();
-        await loginPage.performLogin('standard_user', 'secret_sauce');
         await inventoryPage.addItemToCartById(0);
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe('1');
 
@@ -27,22 +29,28 @@ test.describe('', () => {
         await expect(shopingCartPage.cartItems).not.toBeAttached();
     });
 
-    test('check backward sorting', async ({ loginPage, inventoryPage }) => {
-        await loginPage.navigate();
-        await loginPage.performLogin('standard_user', 'secret_sauce');
-        const itemsBefore = await inventoryPage.inventoryItemNames.allInnerTexts();
-        const itemsSorted = itemsBefore.sort().reverse();
-        await inventoryPage.selectSorting('Name (Z to A)');
-        const itemsAfter = await inventoryPage.inventoryItemNames.allInnerTexts();
-        expect(itemsAfter).toEqual(itemsSorted);
-    });
+    const sortingTypes = ['Name (Z to A)'];
+    for (const sortType of sortingTypes) {
+        test(`check ${sortType} sorting`, async ({ inventoryPage }) => {
+            switch (sortType){
+                    case sortingTypes[0]:
+            }          
+            const itemsBefore = await inventoryPage.inventoryItemNames.allInnerTexts();
+            const pricesBefore = await inventoryPage.inventoryItemPrices.allInnerTexts();
+            const itemsSorted = itemsBefore.sort().reverse();
+            const pricesSorted = pricesBefore.sort();
+            await inventoryPage.selectSorting('Name (Z to A)');
+            const itemsAfter = await inventoryPage.inventoryItemNames.allInnerTexts();
+            expect(itemsAfter).toEqual(itemsSorted);
+        });
+    }
 
-    test('Add product to the cart and compare', async ({ loginPage, inventoryPage, shopingCartPage }) => {
-        await loginPage.navigate();
-        await loginPage.performLogin('standard_user', 'secret_sauce');
-        const selectedCount = 3;
-        const sortedProducts = await inventoryPage.selectNItems(selectedCount);
-        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
+    test('Add product to the cart and compare', async ({ inventoryPage, shopingCartPage }) => {
+        const inventoryItemsCount = await inventoryPage.inventoryItemsCount();
+        const selectedCount = generateRandomNumbers(1, inventoryItemsCount);
+        //const selectedCount = 3;
+        const sortedProducts = await inventoryPage.selectNItems(selectedCount[0]);
+        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount[0].toString());
 
         await inventoryPage.shopingCart.click();
         for (let i = 0; i < selectedCount; i++) {
@@ -53,29 +61,28 @@ test.describe('', () => {
     });
 
     test('Add product and continue purchase', async ({
-        loginPage, inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage,
+        inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage,
     }) => {
-        await loginPage.navigate();
-        await loginPage.performLogin('standard_user', 'secret_sauce');
-        const selectedCount = 3;
+        const inventoryItemsCount = await inventoryPage.inventoryItemsCount();
+        const selectedCount = generateRandomNumbers(1, inventoryItemsCount);
         const info = { firstName: 'John', lastName: 'Doe', zipCode: '123123' };
-        const sortedProducts = await inventoryPage.selectNItems(selectedCount);
-        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
+        const selectedProducts = await inventoryPage.selectNItems(selectedCount[0]);
+        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount[0].toString());
 
         await inventoryPage.shopingCart.click();
         await shopingCartPage.clickCheckout();
         await checkoutInfoPage.fillInfo(info);
         await checkoutInfoPage.clickContinue();
 
-        const itemTotal = await checkoutOverviewPage.totalPriceCalculated(selectedCount);
+        const itemTotal = await checkoutOverviewPage.totalPriceCalculated();//selectedCount[0]);
         const totalOnPage = await checkoutOverviewPage.totalNumber();
         const tax = await checkoutOverviewPage.tax();
         expect(totalOnPage).toBe(itemTotal + tax);
 
-        for (let i = 0; i < selectedCount; i++) {
-            expect(await checkoutOverviewPage.cartItemName(i)).toBe(sortedProducts[i].name);
-            expect(await checkoutOverviewPage.cartItemDescr(i)).toBe(sortedProducts[i].descr);
-            expect(await checkoutOverviewPage.cartItemPrice(i)).toBe(sortedProducts[i].price);
+        for (let i = 0; i < selectedCount[0]; i++) {
+            expect(await checkoutOverviewPage.cartItemName(i)).toBe(selectedProducts[i].name);
+            expect(await checkoutOverviewPage.cartItemDescr(i)).toBe(selectedProducts[i].descr);
+            expect(await checkoutOverviewPage.cartItemPrice(i)).toBe(selectedProducts[i].price);
         }
     });
 });

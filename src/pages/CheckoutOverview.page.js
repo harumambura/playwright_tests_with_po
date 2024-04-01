@@ -25,13 +25,18 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
 
     get itemPrice() { return this.page.locator(this.cartItemPriceSelector); }
 
-    async totalPriceCalculated(itemCount) {
-        let total = 0;
+    async totalPriceCalculated(){//itemCount) {
+        //let total = 0;
+        const priceStrings = await this.itemPrice.allTextContents();
+        const initialValue = 0;
+        return priceStrings.reduce((accumulator, currentValue) => accumulator + Number(currentValue),
+            initialValue,
+        )/*
         for (let i = 0; i < itemCount; i++) {
             const priceString = await this.itemPrice.nth(i).textContent();
             total += priceNumber(priceString);
         }
-        return total;
+        return total;*/
     }
 
     async totalNumber() {
@@ -45,11 +50,11 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
     }
 
     async cartItemData(id) {
-        const item = {};
-        item.name = await this.itemName.nth(id).textContent();
-        item.descr = await this.itemDescr.nth(id).textContent();
-        item.price = await this.itemPrice.nth(id).textContent();
-        return item;
+        return {
+            name: await this.itemName.nth(id).textContent(),
+            descr: await this.itemDescr.nth(id).textContent(),
+            price: await this.itemPrice.nth(id).textContent()
+        }
     }
 
     async cartItemName(id) {

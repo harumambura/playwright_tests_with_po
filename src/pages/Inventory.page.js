@@ -30,17 +30,16 @@ export class InventoryPage extends BaseSwagLabPage {
     }
 
     async itemData(id) {
-        const item = {};
-        item.name = await this.inventoryItemNames.nth(id).textContent();
-        item.descr = await this.inventoryItemDescriptions.nth(id).textContent();
-        item.price = await this.inventoryItemPrices.nth(id).textContent();
-        return item;
+        return {
+            name: await this.inventoryItemNames.nth(id).textContent(),
+            descr: await this.inventoryItemDescriptions.nth(id).textContent(),
+            print: await this.inventoryItemPrices.nth(id).textContent()
+        }
     }
 
-    async selectNItems(n) {
+    async selectNItems(selectedCount) {
         const inventoryItemsCount = await this.itemsCount();
         const products = [];
-        const selectedCount = n;
         const randomProductNumbers = generateRandomNumbers(selectedCount, inventoryItemsCount);
         for (let i = selectedCount - 1; i >= 0; i--) {
             await this.addItemToCartById(randomProductNumbers[i]);

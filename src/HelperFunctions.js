@@ -1,5 +1,3 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable no-plusplus */
 export function generateRandomNumbers(count, maxCount) {
     let randomProductNumbers = [];
     for (let i = 0; i < count; i++) {
