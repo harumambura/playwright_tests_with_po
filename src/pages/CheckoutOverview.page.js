@@ -28,8 +28,9 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
     async totalPriceCalculated(){//itemCount) {
         //let total = 0;
         const priceStrings = await this.itemPrice.allTextContents();
+        //const prices = 
         const initialValue = 0;
-        return priceStrings.reduce((accumulator, currentValue) => accumulator + Number(currentValue),
+        return priceStrings.reduce((accumulator, currentValue) => accumulator + priceNumber(currentValue),
             initialValue,
         )/*
         for (let i = 0; i < itemCount; i++) {
