@@ -33,8 +33,17 @@ export class InventoryPage extends BaseSwagLabPage {
         return {
             name: await this.inventoryItemNames.nth(id).textContent(),
             descr: await this.inventoryItemDescriptions.nth(id).textContent(),
-            print: await this.inventoryItemPrices.nth(id).textContent()
+            price: await this.inventoryItemPrices.nth(id).textContent()
         }
+    }
+
+    async getAllItems() {
+        const allItems = [];
+        const count = await this.itemsCount();
+        for (let i = 0; i < count; i++){
+            allItems.push(await this.itemData(i));
+        }
+        return allItems;
     }
 
     async selectNItems(selectedCount) {
@@ -49,6 +58,6 @@ export class InventoryPage extends BaseSwagLabPage {
     }
 
     async selectSorting(sortType) {
-        await this.inventorySort.selectOption({ label: sortType });
+        await this.inventorySort.selectOption(sortType);
     }
 }
