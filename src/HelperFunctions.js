@@ -1,16 +1,10 @@
 export function generateRandomNumbers(count, maxCount) {
-    let randomProductNumbers = [];
-    for (let i = 0; i < count; i++) {
-        let randomNumber;
-        let isUnique;
-        do {
-            randomNumber = Math.floor(Math.random() * maxCount);
-            isUnique = !randomProductNumbers.includes(randomNumber);
-        } while (!isUnique);
-        randomProductNumbers.push(randomNumber);
-        randomProductNumbers = randomProductNumbers.sort((a, b) => a - b);
+    const randomProductNumbers = new Set();
+    while (randomProductNumbers.size < count) {
+        const randomNumber = Math.floor(Math.random() * maxCount);
+        randomProductNumbers.add(randomNumber);
     }
-    return randomProductNumbers;
+    return Array.from(randomProductNumbers);
 }
 
 export function priceNumber(string) {

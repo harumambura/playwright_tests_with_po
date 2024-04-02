@@ -38,42 +38,28 @@ test.describe('', () => {
     }
 
     test('Add product to the cart and compare', async ({ inventoryPage, shopingCartPage }) => {
-        const inventoryItemsCount = await inventoryPage.itemsCount();
-        const selectedCount = generateRandomNumbers(1, inventoryItemsCount)[0];
-        const sortedProducts = await inventoryPage.selectNItems(selectedCount);
-        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
-
-        await inventoryPage.shopingCart.click();
-        for (let i = 0; i < selectedCount; i++) {
-            expect(await shopingCartPage.cartItemName(i)).toBe(sortedProducts[i].name);
-            expect(await shopingCartPage.cartItemDescr(i)).toBe(sortedProducts[i].descr);            
-            expect(await shopingCartPage.cartItemPrice(i)).toBe(sortedProducts[i].price);
-        }
+        const selectedProducts = await inventoryPage.selectItems();
+        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedProducts.length.toString());
+        await inventoryPage.shopingCart.click();                
+        const cartProducts = await shopingCartPage.getAllItems();
+        expect(cartProducts).toEqual(selectedProducts);
     });
 
     test('Add product and continue purchase', async ({
-        inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage
-    }) => {
-        const inventoryItemsCount = await inventoryPage.itemsCount();
-        const selectedCount = generateRandomNumbers(1, inventoryItemsCount)[0];
-        const info = { firstName: 'John', lastName: 'Doe', zipCode: '123123' };
-        const selectedProducts = await inventoryPage.selectNItems(selectedCount);
-        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedCount.toString());
-
+        inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage }) => {
+        const selectedProducts = await inventoryPage.selectItems();
+        expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedProducts.length.toString());
         await inventoryPage.shopingCart.click();
         await shopingCartPage.clickCheckout();
-        await checkoutInfoPage.fillInfo(info);
+        await checkoutInfoPage.fillInfo({ firstName: 'John', lastName: 'Doe', zipCode: '123123' });
         await checkoutInfoPage.clickContinue();
 
         const itemTotal = await checkoutOverviewPage.totalPriceCalculated();
         const totalOnPage = await checkoutOverviewPage.totalNumber();
         const tax = await checkoutOverviewPage.tax();
         expect(totalOnPage).toBe(itemTotal + tax);
-
-        for (let i = 0; i < selectedCount; i++) {
-            expect(await checkoutOverviewPage.cartItemName(i)).toBe(selectedProducts[i].name);
-            expect(await checkoutOverviewPage.cartItemDescr(i)).toBe(selectedProducts[i].descr);
-            expect(await checkoutOverviewPage.cartItemPrice(i)).toBe(selectedProducts[i].price);
-        }
+                       
+        const overviewProducts = await shopingCartPage.getAllItems();
+        expect(overviewProducts).toEqual(selectedProducts);
     });
 });

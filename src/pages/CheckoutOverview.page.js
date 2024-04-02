@@ -7,6 +7,8 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
 
     totalSelector = '.summary_total_label';
 
+    cartItemSelector = '.cart_item';
+
     cartItemNameSelector = '.inventory_item_name';
 
     cartItemDescrSelector = '.inventory_item_desc';
@@ -25,19 +27,14 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
 
     get itemPrice() { return this.page.locator(this.cartItemPriceSelector); }
 
-    async totalPriceCalculated(){//itemCount) {
-        //let total = 0;
+    get cartItems() { return this.page.locator(this.cartItemSelector); }
+
+    async totalPriceCalculated(){
         const priceStrings = await this.itemPrice.allTextContents();
-        //const prices = 
         const initialValue = 0;
         return priceStrings.reduce((accumulator, currentValue) => accumulator + priceNumber(currentValue),
             initialValue,
-        )/*
-        for (let i = 0; i < itemCount; i++) {
-            const priceString = await this.itemPrice.nth(i).textContent();
-            total += priceNumber(priceString);
-        }
-        return total;*/
+        )
     }
 
     async totalNumber() {
@@ -68,5 +65,19 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
 
     async cartItemPrice(id) {
         return (await this.cartItemData(id)).price;
+    }
+
+    async itemsCount() {
+        const count = await this.cartItems.count();
+        return count;
+    }
+
+    async getAllItems() {
+        const allItems = [];
+        const count = await this.itemsCount();
+        for (let i = 0; i < count; i++){
+            allItems.push(await this.cartItemData(i));
+        }
+        return allItems;
     }
 }

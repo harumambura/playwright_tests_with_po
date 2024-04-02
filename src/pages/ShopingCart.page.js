@@ -49,6 +49,20 @@ export class ShopingCartPage extends BaseSwagLabPage {
         }
     }
 
+    async itemsCount() {
+        const count = await this.cartItems.count();
+        return count;
+    }
+
+    async getAllItems() {
+        const allItems = [];
+        const count = await this.itemsCount();
+        for (let i = 0; i < count; i++){
+            allItems.push(await this.cartItemData(i));
+        }
+        return allItems;
+    }
+
     async cartItemName(id) {
         return (await this.cartItemData(id)).name;
     }
