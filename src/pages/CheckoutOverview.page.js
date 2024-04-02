@@ -55,18 +55,6 @@ export class CheckoutOverviewPage extends BaseSwagLabPage {
         }
     }
 
-    async cartItemName(id) {
-        return (await this.cartItemData(id)).name;
-    }
-
-    async cartItemDescr(id) {
-        return (await this.cartItemData(id)).descr;
-    }
-
-    async cartItemPrice(id) {
-        return (await this.cartItemData(id)).price;
-    }
-
     async itemsCount() {
         const count = await this.cartItems.count();
         return count;

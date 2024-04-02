@@ -61,17 +61,5 @@ export class ShopingCartPage extends BaseSwagLabPage {
             allItems.push(await this.cartItemData(i));
         }
         return allItems;
-    }
-
-    async cartItemName(id) {
-        return (await this.cartItemData(id)).name;
-    }
-
-    async cartItemDescr(id) {
-        return (await this.cartItemData(id)).descr;
-    }
-
-    async cartItemPrice(id) {
-        return (await this.cartItemData(id)).price;
-    }
+    } 
 }
