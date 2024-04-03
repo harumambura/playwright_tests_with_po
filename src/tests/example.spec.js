@@ -18,8 +18,7 @@ test.describe('', () => {
     test('Add and remove product from the cart', async ({ inventoryPage, shopingCartPage }) => {
         await inventoryPage.addItemToCartById(0);
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe('1');
-
-        await inventoryPage.shopingCart.click();
+        await inventoryPage.clickOnCart();
         expect(await shopingCartPage.invItems.count()).toBeGreaterThanOrEqual(1);
 
         await shopingCartPage.removeCartItemById(0);
@@ -40,7 +39,7 @@ test.describe('', () => {
     test('Add product to the cart and compare', async ({ inventoryPage, shopingCartPage }) => {
         const selectedProducts = await inventoryPage.selectItems();
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedProducts.length.toString());
-        await inventoryPage.shopingCart.click();                
+        await inventoryPage.clickOnCart();               
         const cartProducts = await shopingCartPage.getAllItems();
         expect(cartProducts).toEqual(selectedProducts);
     });
@@ -49,7 +48,7 @@ test.describe('', () => {
         inventoryPage, shopingCartPage, checkoutInfoPage, checkoutOverviewPage }) => {
         const selectedProducts = await inventoryPage.selectItems();
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedProducts.length.toString());
-        await inventoryPage.shopingCart.click();
+        await inventoryPage.clickOnCart();
         await shopingCartPage.clickCheckout();
         await checkoutInfoPage.fillInfo({ firstName: 'John', lastName: 'Doe', zipCode: '123123' });
         await checkoutInfoPage.clickContinue();

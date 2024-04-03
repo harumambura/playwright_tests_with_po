@@ -21,6 +21,10 @@ export class InventoryPage extends BaseItemsPage {
         return count;
     }
 
+    async clickOnCart() {
+        await this.shopingCart.click();
+    }
+
     async selectItems() {
         const inventoryItemsCount = await this.itemsCount();
         const products = [];
