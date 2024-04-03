@@ -1,6 +1,6 @@
 const { expect } = require('@playwright/test');
 const { test } = require('../fixture');
-const { generateRandomNumbers, sortItems } = require('../HelperFunctions');
+const { sortItems } = require('../HelperFunctions');
 
 
 test.describe('', () => {
@@ -12,7 +12,7 @@ test.describe('', () => {
     test('Perform login', async ({ inventoryPage }) => {
         await expect(inventoryPage.headerTitle).toBeVisible();
 
-        expect(await inventoryPage.inventoryItems.count()).toBeGreaterThanOrEqual(1);
+        expect(await inventoryPage.invItems.count()).toBeGreaterThanOrEqual(1);
     });
 
     test('Add and remove product from the cart', async ({ inventoryPage, shopingCartPage }) => {
@@ -20,10 +20,10 @@ test.describe('', () => {
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe('1');
 
         await inventoryPage.shopingCart.click();
-        expect(await shopingCartPage.cartItems.count()).toBeGreaterThanOrEqual(1);
+        expect(await shopingCartPage.invItems.count()).toBeGreaterThanOrEqual(1);
 
         await shopingCartPage.removeCartItemById(0);
-        await expect(shopingCartPage.cartItems).not.toBeAttached();
+        await expect(shopingCartPage.invItems).not.toBeAttached();
     });
 
     const sortingTypes = ['za', 'az', 'lohi', 'hilo'];
@@ -57,7 +57,7 @@ test.describe('', () => {
         const itemTotal = await checkoutOverviewPage.totalPriceCalculated();
         const totalOnPage = await checkoutOverviewPage.totalNumber();
         const tax = await checkoutOverviewPage.tax();
-        expect(totalOnPage).toBe(itemTotal + tax);
+        expect(totalOnPage).toBe(parseFloat((itemTotal + tax).toFixed(2)));
                        
         const overviewProducts = await shopingCartPage.getAllItems();
         expect(overviewProducts).toEqual(selectedProducts);

@@ -1,20 +1,14 @@
-const { BaseSwagLabPage } = require('./BaseSwagLab.page');
+const { BaseItemsPage } = require('./BaseItems.page');
 const { generateRandomNumbers } = require('../HelperFunctions');
 
-export class InventoryPage extends BaseSwagLabPage {
+export class InventoryPage extends BaseItemsPage {
     url = '/inventory.html';
 
     get headerTitle() { return this.page.locator('.title'); } 
 
-    get inventoryItems() { return this.page.locator('.inventory_item'); }
+    get invItems() { return this.page.locator('.inventory_item'); }
 
     get addItemToCartBtns() { return this.page.locator('[id^="add-to-cart"]'); }
-
-    get inventoryItemNames() { return this.page.locator('.inventory_item_name'); }
-
-    get inventoryItemDescriptions() { return this.page.locator('.inventory_item_desc'); }
-
-    get inventoryItemPrices() { return this.page.locator('.inventory_item_price'); }
 
     get inventorySort() { return this.page.locator('.product_sort_container'); }
 
@@ -23,25 +17,8 @@ export class InventoryPage extends BaseSwagLabPage {
     }
 
     async itemsCount() {
-        const count = await this.inventoryItems.count();
+        const count = await this.invItems.count();
         return count;
-    }
-
-    async itemData(id) {
-        return {
-            name: await this.inventoryItemNames.nth(id).textContent(),
-            descr: await this.inventoryItemDescriptions.nth(id).textContent(),
-            price: await this.inventoryItemPrices.nth(id).textContent()
-        }
-    }
-
-    async getAllItems() {
-        const allItems = [];
-        const count = await this.itemsCount();
-        for (let i = 0; i < count; i++){
-            allItems.push(await this.itemData(i));
-        }
-        return allItems;
     }
 
     async selectItems() {
@@ -52,7 +29,7 @@ export class InventoryPage extends BaseSwagLabPage {
 
         for (const randomNumber of randomProductNumbers) {
             products.push(await this.itemData(randomNumber));
-            await this.inventoryItems.nth(randomNumber).locator('[id^="add-to-cart"]').click();
+            await this.invItems.nth(randomNumber).locator('[id^="add-to-cart"]').click();
         }
         return products;
     }
