@@ -4,21 +4,16 @@ const { generateRandomNumbers } = require('../HelperFunctions');
 export class InventoryPage extends BaseItemsPage {
     url = '/inventory.html';
 
-    get headerTitle() { return this.page.locator('.title'); } 
+    get headerTitle() { return this.page.locator('[data-test="title"]'); } 
 
-    get invItems() { return this.page.locator('.inventory_item'); }
+    get invItems() { return this.page.locator('[data-test="inventory-item"]'); }
 
     get addItemToCartBtns() { return this.page.locator('[id^="add-to-cart"]'); }
 
-    get inventorySort() { return this.page.locator('.product_sort_container'); }
+    get inventorySort() { return this.page.locator('[data-test="product-sort-container"]'); }
 
-    async addItemToCartById(id) {
-        await this.addItemToCartBtns.nth(id).click();
-    }
-
-    async itemsCount() {
-        const count = await this.invItems.count();
-        return count;
+    async addItemToCartByIndex(index) {
+        await this.addItemToCartBtns.nth(index).click();
     }
 
     async clickOnCart() {
@@ -26,7 +21,7 @@ export class InventoryPage extends BaseItemsPage {
     }
 
     async selectItems() {
-        const inventoryItemsCount = await this.itemsCount();
+        const inventoryItemsCount = await this.invItems.count();
         const products = [];
         const selectedCount = generateRandomNumbers(1, inventoryItemsCount)[0] || 1;
         const randomProductNumbers = generateRandomNumbers(selectedCount, inventoryItemsCount);

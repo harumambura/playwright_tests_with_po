@@ -5,13 +5,9 @@ const { BaseItemsPage } = require('./BaseItems.page');
 export class CheckoutOverviewPage extends BaseItemsPage {
     url = '/checkout-step-one.html';
 
-    totalSelector = '.summary_total_label';
+    get totalPrice() { return this.page.locator('[data-test="total-label"]'); }
 
-    cartTaxSelector = '.summary_tax_label';
-
-    get totalPrice() { return this.page.locator(this.totalSelector); }
-
-    get cartTax() { return this.page.locator(this.cartTaxSelector); }
+    get cartTax() { return this.page.locator('[data-test="tax-label"]'); }
 
     async totalPriceCalculated(){
         const priceStrings = await this.itemsPrice.allTextContents();

@@ -2,21 +2,13 @@ const { BaseSwagLabPage } = require('./BaseSwagLab.page');
 
 export class BaseItemsPage extends BaseSwagLabPage {
 
-    itemSelector = '.cart_item';
+    get invItems() { return this.page.locator('[data-test="inventory-item"]'); }
 
-    itemNameSelector = '.inventory_item_name';
+    get itemsName() { return this.page.locator('[data-test="inventory-item-name"]'); }
 
-    itemDescrSelector = '.inventory_item_desc';
+    get itemsDescr() { return this.page.locator('[data-test="inventory-item-desc"]'); }
 
-    itemPriceSelector = '.inventory_item_price';
-
-    get invItems() { return this.page.locator(this.itemSelector); }
-
-    get itemsName() { return this.page.locator(this.itemNameSelector); }
-
-    get itemsDescr() { return this.page.locator(this.itemDescrSelector); }
-
-    get itemsPrice() { return this.page.locator(this.itemPriceSelector); }
+    get itemsPrice() { return this.page.locator('[data-test="inventory-item-price"]'); }
 
     async itemData(id) {
         return {
@@ -26,14 +18,9 @@ export class BaseItemsPage extends BaseSwagLabPage {
         }
     }
 
-    async itemsCount() {
-        const count = await this.invItems.count();
-        return count;
-    }
-
-    async getAllItems() {
+    async getAllItemsData() {
         const allItems = [];
-        const count = await this.itemsCount();
+        const count = await this.invItems.count();
         for (let i = 0; i < count; i++){
             allItems.push(await this.itemData(i));
         }

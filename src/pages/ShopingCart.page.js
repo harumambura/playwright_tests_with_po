@@ -7,8 +7,6 @@ export class ShopingCartPage extends BaseItemsPage {
 
     checkoutSelector = '#checkout';
 
-    get headerTitle() { return this.page.locator('.title'); }
-
     // async below added to show the function returns a promise
     async getCartItemByName(name) { return this.page.locator(this.itemSelector, { hasText: name }); }
 

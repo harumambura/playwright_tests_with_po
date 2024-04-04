@@ -16,7 +16,7 @@ test.describe('', () => {
     });
 
     test('Add and remove product from the cart', async ({ inventoryPage, shopingCartPage }) => {
-        await inventoryPage.addItemToCartById(0);
+        await inventoryPage.addItemToCartByIndex(0);
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe('1');
         await inventoryPage.clickOnCart();
         expect(await shopingCartPage.invItems.count()).toBeGreaterThanOrEqual(1);
@@ -28,10 +28,10 @@ test.describe('', () => {
     const sortingTypes = ['za', 'az', 'lohi', 'hilo'];
     for (const sortType of sortingTypes) {
         test(`check ${sortType} sorting`, async ({ inventoryPage }) => {            
-            const itemsBefore = await inventoryPage.getAllItems();
+            const itemsBefore = await inventoryPage.getAllItemsData();
             await inventoryPage.selectSorting(sortType);
             const itemsSorted = sortItems(itemsBefore, sortType);      
-            const itemsAfter = await inventoryPage.getAllItems();
+            const itemsAfter = await inventoryPage.getAllItemsData();
             expect(itemsAfter).toEqual(itemsSorted);
         });
     }
@@ -40,7 +40,7 @@ test.describe('', () => {
         const selectedProducts = await inventoryPage.selectItems();
         expect(await inventoryPage.getNumberOfItemsInCart()).toBe(selectedProducts.length.toString());
         await inventoryPage.clickOnCart();               
-        const cartProducts = await shopingCartPage.getAllItems();
+        const cartProducts = await shopingCartPage.getAllItemsData();
         expect(cartProducts).toEqual(selectedProducts);
     });
 
@@ -58,7 +58,7 @@ test.describe('', () => {
         const tax = await checkoutOverviewPage.tax();
         expect(totalOnPage).toBe(parseFloat((itemTotal + tax).toFixed(2)));
                        
-        const overviewProducts = await shopingCartPage.getAllItems();
+        const overviewProducts = await shopingCartPage.getAllItemsData();
         expect(overviewProducts).toEqual(selectedProducts);
     });
 });
