@@ -1,6 +1,6 @@
 const { expect } = require('@playwright/test');
 const { test } = require('../fixture');
-const { sortItems } = require('../HelperFunctions');
+const { sortItems, priceNumber } = require('../HelperFunctions');
 
 
 test.describe('', () => {
@@ -25,12 +25,16 @@ test.describe('', () => {
         await expect(shopingCartPage.invItems).not.toBeAttached();
     });
 
-    const sortingTypes = ['za', 'az', 'lohi', 'hilo'];
+    const sortingTypes = [{sort: 'za', sortFunc: (itemsBefore) => itemsBefore.sort((a, b) => b.name.localeCompare(a.name))}, 
+                          {sort: 'az', sortFunc: (itemsBefore) => itemsBefore.sort((a, b) => a.name.localeCompare(b.name))}, 
+                          {sort: 'lohi', sortFunc: (itemsBefore) => itemsBefore.sort((a, b) => priceNumber(a.price) - priceNumber(b.price))}, 
+                          {sort: 'hilo', sortFunc: (itemsBefore) => itemsBefore.sort((a, b) => priceNumber(b.price) - priceNumber(a.price))}];
     for (const sortType of sortingTypes) {
-        test(`check ${sortType} sorting`, async ({ inventoryPage }) => {            
+        test(`check ${sortType.sort} sorting`, async ({ inventoryPage }) => {            
             const itemsBefore = await inventoryPage.getAllItemsData();
-            await inventoryPage.selectSorting(sortType);
-            const itemsSorted = sortItems(itemsBefore, sortType);      
+            await inventoryPage.selectSorting(sortType.sort);
+            //const itemsSorted = sortItems(itemsBefore, sortType);   
+            const itemsSorted = sortType.sortFunc(itemsBefore);
             const itemsAfter = await inventoryPage.getAllItemsData();
             expect(itemsAfter).toEqual(itemsSorted);
         });

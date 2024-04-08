@@ -11,7 +11,7 @@ export function priceNumber(string) {
     const arr = string.split('$');
     return Number(arr[1]);
 }
-
+/*
 export function sortItems(itemsBefore, sortType) {
     let itemsSorted = [];
     switch (sortType){
@@ -29,4 +29,4 @@ export function sortItems(itemsBefore, sortType) {
     }
     return itemsSorted;
 
-}
+}*/
